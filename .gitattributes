@@ -1,1 +1,3 @@
-data_processing/preprocessing.py -text
+data_processing/* text eol=lf
+feature_generation/* text eol=lf
+standardization/* text eol=lf
