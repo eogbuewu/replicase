@@ -59,6 +59,7 @@ newdata['pchembl_value'] = pd.to_numeric(newdata['pchembl_value'], errors='coerc
 newdata.loc[newdata['pchembl_value'].isnull(), 'pchembl_value'] = np.log10(newdata.loc[newdata['pchembl_value'].isnull(), 'standard_value'].values)
 newdata['pchembl_value'] = newdata['pchembl_value'].round(2)
 
+# define the activity class using 4 as the pchembl value cut-off
 bioactivity_class = []
 for i in newdata.pchembl_value:
     if float(i) <= 4:

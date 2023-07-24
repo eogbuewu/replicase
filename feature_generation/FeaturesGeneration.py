@@ -4,24 +4,23 @@ pip install rdkit
 pip install tqdm
 #importing the cheminformatics module needed
 import molvs
+import pandas as pd
+import numpy as np
 from rdkit import Chem
+import tempfile
+import os
 from rdkit.Chem import AllChem
 from rdkit.Chem import PandasTools
 from rdkit.Chem import Draw
 from rdkit.Chem import MolStandardize
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit.Chem import MACCSkeys
-from rdkit.Chem import SaltRemover
 from rdkit.Chem import rdMolDescriptors
-from rdkit.Avalon import pyAvalonTools
 from rdkit.Chem import Descriptors
 from rdkit.ML.Descriptors import MoleculeDescriptors
 from tqdm import tqdm
-import math
 from rdkit.Chem.Draw import IPythonConsole
 IPythonConsole.drawOptions.comicMode=True
-from rdkit import RDLogger
-RDLogger.DisableLog('rdApp.info')
 import rdkit
 print(rdkit.__version__)
 
@@ -54,7 +53,7 @@ def generate_RDKfpts(data):
         rdkfpts = AllChem.RDKFingerprint(mol, maxPath=5, fpSize=2048, nBitsPerHash=2 )
         RDK_fpts.append(rdkfpts)
     return np.array(RDK_fpts)
-RDK_fpts = generate_RDKfpts(df_nr['standardized_molecule'])
+RDK_fpts = generate_RDKfpts(df['standardized_molecule'])
 #put it in dataframe
 RDK_fingerprints = pd.DataFrame(RDK_fpts, columns=['Col_B_{}'.format(i + 1)
                                   for i in range(RDK_fpts.shape[1])])
@@ -168,3 +167,23 @@ features_array = np.array(features)
 all_features_array = np.array(all_features)
 all_features_array.shape
 
+all_features_array
+
+TPAT_fingerprints = pd.DataFrame(all_features_array, columns=['Col_G_{}'.format(i + 1)
+                                  for i in range(all_features_array.shape[1])])
+TPAT_fingerprints.head()
+#TPAT_fingerprints.shape
+
+# Concatenate the data frames column-wise
+result = pd.concat([df, maccskeys_fingerprints,RDK_fingerprints, AP_fingerprints, TT_fingerprints, ECFP4_fingerprints, TPAT_fingerprints, df_with_208descriptors], axis=1)
+result.shape
+
+# Step 1: Check for NaN or blank spaces in all columns
+rows_with_nan_or_blank = result.isnull().any(axis=1)
+
+# Step 2: Drop the rows with NaN or blank spaces from the DataFrame
+result_df = result.drop(result[rows_with_nan_or_blank].index)
+
+result_df.shape
+
+result_df.to_csv('features_column.csv', index=False)

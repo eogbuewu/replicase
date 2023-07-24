@@ -4,15 +4,13 @@ pip install rdkit
 
 #importing the cheminformatics module needed
 import molvs
+import pandas as pd
+import numpy as np
 from molvs import Standardizer, normalize
 from rdkit import Chem
-
 from tqdm import tqdm
-import math
 from rdkit.Chem.Draw import IPythonConsole
 IPythonConsole.drawOptions.comicMode=True
-from rdkit import RDLogger
-RDLogger.DisableLog('rdApp.info')
 import rdkit
 print(rdkit.__version__)
 
